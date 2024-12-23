@@ -1,9 +1,10 @@
 import yt_dlp
 import logging
 import os
+import re
 
 # Initialize logger
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)    
 
 class VideoDownloader:
     def __init__(self, url):
@@ -29,7 +30,12 @@ class VideoDownloader:
             self.get_video_info()
         if self.video_info:
             formats = self.video_info.get('formats', [])
-            qualities = list(set(f['format_note'] for f in formats if 'format_note' in f))
+            format_mapping = {
+                "144p": "160", "240p": "133", "360p": "134", "480p": "135", "720p": "136",
+                "1080p": "299", "1440p": "308", "2160p": "315", "audio": "140", "mp3": "mp3", "best": "best"
+            }
+            reverse_mapping = {v: k for k, v in format_mapping.items()}
+            qualities = list(set(reverse_mapping.get(f['format_id'], f.get('format_note', 'Unknown')) for f in formats if 'format_id' in f))
             qualities.append('mp3')
             logger.info(f"Found qualities: {qualities} for URL: {self.url}")
             return qualities
@@ -49,16 +55,21 @@ class VideoDownloader:
             return self.video_info.get('title')
         return None
 
+    def sanitize_title(self, title):
+        return re.sub(r'[\\/*?:"<>|]', "_", title)
+
     def download_video(self, quality):
         download_path = os.path.join(os.getcwd(), 'media')
         if not os.path.exists(download_path):
             os.makedirs(download_path)
 
+        sanitized_title = self.sanitize_title(self.get_video_title())
+
         if quality == 'mp3':
             ydl_opts = {
                 'format': 'bestaudio/best',
                 'quiet': True,
-                'outtmpl': os.path.join(download_path, '%(title)s.%(ext)s'),
+                'outtmpl': os.path.join(download_path, f'{sanitized_title}.%(ext)s'),
                 'postprocessors': [{
                     'key': 'FFmpegExtractAudio',
                     'preferredcodec': 'mp3',
@@ -67,9 +78,9 @@ class VideoDownloader:
             }
         else:
             ydl_opts = {
-                'format': f'best[format_note={quality}]',
+                'format': f'bestvideo[height<={quality}]+bestaudio/best' if quality.isdigit() else f'best[format_note={quality}]',
                 'quiet': True,
-                'outtmpl': os.path.join(download_path, '%(title)s.%(ext)s'),
+                'outtmpl': os.path.join(download_path, f'{sanitized_title}.%(ext)s'),
             }
         try:
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
