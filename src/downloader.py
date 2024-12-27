@@ -65,6 +65,12 @@ class VideoDownloader:
 
         sanitized_title = self.sanitize_title(self.get_video_title())
 
+        format_mapping = {
+            "144p": "160", "240p": "133", "360p": "134", "480p": "135", "720p": "136",
+            "1080p": "299", "1440p": "308", "2160p": "315", "audio": "140", "mp3": "mp3", "best": "best"
+        }
+        format_id = format_mapping.get(quality, quality)
+
         if quality == 'mp3':
             ydl_opts = {
                 'format': 'bestaudio/best',
@@ -78,7 +84,7 @@ class VideoDownloader:
             }
         else:
             ydl_opts = {
-                'format': f'bestvideo[height<={quality}]+bestaudio/best' if quality.isdigit() else f'best[format_note={quality}]',
+                'format': format_id,
                 'quiet': True,
                 'outtmpl': os.path.join(download_path, f'{sanitized_title}.%(ext)s'),
             }
