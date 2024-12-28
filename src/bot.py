@@ -74,10 +74,18 @@ class TelegramBot:
                     await query.message.reply_text(text=result)
                 return
             result = downloader.download_video(quality)
-            if "Downloaded video" in result:
+            if "Downloaded" in result:
                 sanitized_title = downloader.sanitize_title(downloader.get_video_title())
-                video_path = os.path.join(os.getcwd(), 'media', f"{sanitized_title}.mp4")
-                await query.message.reply_video(video=open(video_path, 'rb'), caption=result)
+                media_dir = os.path.join(os.getcwd(), 'media')
+                if not os.path.exists(media_dir):
+                    os.makedirs(media_dir)
+                file_extension = "mp3" if quality == "mp3" else "mp4"
+                video_path = os.path.join(media_dir, f"{sanitized_title}_{quality}.{file_extension}")
+                with open(video_path, 'rb') as video_file:
+                    if quality == "mp3":
+                        await query.message.reply_audio(audio=video_file, caption=result)
+                    else:
+                        await query.message.reply_video(video=video_file, caption=result)
             else:
                 if query.message.text:
                     await query.edit_message_text(text=result)
