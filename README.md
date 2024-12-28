@@ -1,6 +1,11 @@
-# Telegram Video Downloader Bot
+# Telegram YouTube Bot
 
-This project is a Telegram bot that allows users to download videos from YouTube. When a user sends a YouTube link, the bot prompts them to select the desired video quality before downloading.
+This bot allows users to download YouTube videos in various qualities directly from Telegram.
+
+## Features
+- Download videos in different qualities (144p, 240p, 360p, 480p, 720p, 1080p)
+- Download audio as MP3
+- Get video information such as title and thumbnail
 
 ## Project Structure
 
@@ -16,35 +21,29 @@ telegram-bot
 └── README.md             # Documentation for the project
 ```
 
-## Setup Instructions
-
+## Installation
 1. Clone the repository:
+   ```bash
+   git clone https://github.com/STARK-404/telegram-youtube-bot.git
    ```
-   git clone <repository-url>
-   cd telegram-bot
-   ```
-
 2. Install the required dependencies:
-   ```
+   ```bash
    pip install -r requirements.txt
    ```
-
-3. Set up your Telegram bot by talking to [BotFather](https://t.me/botfather) and obtain your bot token.
-
-4. Update the bot token in `src/main.py`.
-
-## Usage Guidelines
-
-1. Run the bot:
-   ```
+3. Run the bot:
+   ```bash
    python src/main.py
    ```
 
+## Usage Guidelines
+
+1. Start the bot by sending the `/start` command.
 2. Send a YouTube link to the bot.
+3. Select the desired video quality from the provided options.
+4. The bot will download the video and send it to you.
 
-3. Select the desired video quality from the options provided.
-
-4. The bot will download the video and send it back to you.
+## Owner
+This project is owned and maintained by [STARK-404](https://github.com/STARK-404).
 
 ## Contributing
 
