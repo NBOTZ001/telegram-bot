@@ -9,7 +9,7 @@ logging.basicConfig(level=logging.INFO)
 
 def main():
     # Initialize the bot with your token
-    bot_token = '8134012798:AAFKh9fQFZ-TtIiKz4qcSxtlziThG_TrC3U'
+    bot_token = '6131505585:AAE3n8lbHeC0JZ8L954ZFEyjvch9Ey8Q2VY'
     application = Application.builder().token(bot_token).build()
 
     # Create an instance of the TelegramBot class
